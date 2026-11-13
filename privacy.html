@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>N.I.A Privacy Policy</title>
+  <meta name="description" content="How N.I.A, a self-hosted family assistant, uses the Google Calendar data people connect to it.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <p><a href="./">← N.I.A</a></p>
+    <h1>Privacy policy</h1>
+    <p class="lead">Last updated: 13 November 2026</p>
+
+    <p>N.I.A is a self-hosted family assistant that runs on the household's own computer. “nia-os” is the Google sign-in it uses to connect each person's own Google Calendar. This policy covers what N.I.A does with the Google data it receives.</p>
+
+    <h2>What N.I.A receives from Google</h2>
+    <ul>
+      <li>The email address of the Google account you connect (scopes <code>openid</code> and <code>email</code>), so N.I.A can show which account is connected.</li>
+      <li>Access to your Google Calendar (scope <code>https://www.googleapis.com/auth/calendar</code>): your calendars and their events.</li>
+    </ul>
+
+    <h2>How it is used</h2>
+    <ul>
+      <li>N.I.A reads your calendars and events only when you ask it something that needs them, such as “what's on tomorrow?”.</li>
+      <li>It creates, changes or deletes an event only when you ask, and only after you confirm that specific change.</li>
+      <li>It works only with the account <em>you</em> connected. Other people in the household cannot use your calendar through N.I.A.</li>
+      <li>Your Google data is not used for advertising, is not sold, and is not used to train AI models.</li>
+    </ul>
+
+    <h2>Where it is kept</h2>
+    <ul>
+      <li>Everything stays on the household's own N.I.A server. There is no N.I.A cloud service.</li>
+      <li>The refresh token Google issues is stored encrypted in N.I.A's key vault. Short-lived access tokens are kept in memory only.</li>
+      <li>Events are not copied into a separate store. They are read from Google when needed and appear in the conversation in which you asked about them, which is saved on the household's server like your other conversations.</li>
+    </ul>
+
+    <h2>Who else sees it</h2>
+    <ul>
+      <li><strong>Google</strong>, whose Calendar API N.I.A calls.</li>
+      <li><strong>The AI model service the household chose for N.I.A</strong> (for example Anthropic's Claude). When you ask about your calendar, the event details N.I.A reads are sent to that service so it can answer you, as part of your conversation. Nothing is shared with anyone else.</li>
+    </ul>
+
+    <h2>Limited Use</h2>
+    <p>N.I.A's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+    <h2>Disconnecting and deletion</h2>
+    <ul>
+      <li>In N.I.A, go to <strong>Settings → Account → Connected accounts</strong> and disconnect Google. N.I.A revokes its access at Google and deletes the stored token.</li>
+      <li>You can also remove access at <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.</li>
+      <li>Your events stay in your Google Calendar. N.I.A never deletes them except when you ask and confirm.</li>
+      <li>To have conversations that mention your events deleted, delete them in N.I.A, or ask the household admin who runs it.</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy: <a href="https://github.com/JoeFu">github.com/JoeFu</a>, or the person in your household who runs N.I.A.</p>
+
+    <hr>
+
+    <section id="zh" lang="zh-CN">
+      <h1>隐私权政策</h1>
+      <p class="lead">更新日期：2026 年 11 月 13 日</p>
+      <p>N.I.A 是运行在家里自己电脑上的家庭助手。「nia-os」是它用来连接每个人自己的 Google 日历的授权。本政策说明 N.I.A 怎么处理从 Google 拿到的数据。</p>
+
+      <h2>从 Google 拿到什么</h2>
+      <ul>
+        <li>你连接的 Google 账号的邮箱地址（<code>openid</code>、<code>email</code>），用来显示连接的是哪个账号；</li>
+        <li>访问你的 Google 日历（<code>https://www.googleapis.com/auth/calendar</code>）：你的日历和日程。</li>
+      </ul>
+
+      <h2>怎么用</h2>
+      <ul>
+        <li>只有你问到需要日历的问题时（比如「明天有什么安排」），N.I.A 才去读你的日历；</li>
+        <li>只有你要求、并且逐条确认后，它才新建、修改或删除日程；</li>
+        <li>它只用你自己连接的账号，家里其他人不能通过 N.I.A 用你的日历；</li>
+        <li>不用于广告，不出售，也不用来训练 AI 模型。</li>
+      </ul>
+
+      <h2>存在哪里</h2>
+      <ul>
+        <li>都在家里自己的 N.I.A 服务器上，没有 N.I.A 云服务；</li>
+        <li>Google 给的刷新令牌加密存在 N.I.A 的密钥保险库里，短期的访问令牌只放在内存里；</li>
+        <li>日程不会另存一份：需要时从 Google 读取，出现在你提问的那段对话里，对话和其他对话一样保存在家里的服务器上。</li>
+      </ul>
+
+      <h2>还有谁能看到</h2>
+      <ul>
+        <li><strong>Google</strong>：N.I.A 调用的是它的日历接口；</li>
+        <li><strong>家里为 N.I.A 选的 AI 模型服务</strong>（比如 Anthropic 的 Claude）：你问到日历时，N.I.A 读到的日程内容会作为对话的一部分发给它，用来回答你。不会分享给其他任何人。</li>
+      </ul>
+
+      <h2>有限使用</h2>
+      <p>N.I.A 对通过 Google API 获得的信息的使用和传输，遵守 <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API 服务用户数据政策</a>，包括其中的「有限使用」要求。</p>
+
+      <h2>断开和删除</h2>
+      <ul>
+        <li>在 N.I.A 的「设置 → 账户 → 已连接的账号」里断开 Google：N.I.A 会在 Google 那边撤销授权，并删除保存的令牌；</li>
+        <li>也可以到 <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a> 撤销；</li>
+        <li>你的日程留在你的 Google 日历里，除非你要求并确认，N.I.A 不会删除；</li>
+        <li>提到日程的对话，可以在 N.I.A 里删除，或者请家里管理 N.I.A 的人删除。</li>
+      </ul>
+
+      <h2>联系</h2>
+      <p>对本政策有疑问：<a href="https://github.com/JoeFu">github.com/JoeFu</a>，或者家里管理 N.I.A 的人。</p>
+    </section>
+  </main>
+  <footer>N.I.A · <a href="https://github.com/JoeFu">github.com/JoeFu</a></footer>
+</body>
+</html>
