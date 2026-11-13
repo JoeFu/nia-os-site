@@ -1,0 +1,111 @@
+<!doctype html>
+<!--
+  N.I.A's Google sign-in relay page (ADR 0040). Put this file on a public HTTPS site of your
+  own (GitHub Pages works), register its address as the redirect URI of a "Web application"
+  OAuth client, and enter the same address in N.I.A under Settings → Integrations → Google
+  Calendar → "Relay page".
+
+  Google sends the browser here after consent. The page runs only in that browser: it reads
+  where N.I.A is open from the state N.I.A made (after the dot), and if that's an address on
+  the home network, sends the browser there with Google's answer. Nothing is stored or sent
+  anywhere else. The code is useless without N.I.A's client secret and the one-time PKCE key.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+  <meta name="robots" content="noindex">
+  <title>N.I.A · Google</title>
+  <style>
+    :root { --bg: #fff; --fg: #18181b; --muted: #52525b; --line: #e4e4e7; --field: #f4f4f5; --accent: #2563eb; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #18181b; --fg: #f4f4f5; --muted: #a1a1aa; --line: #3f3f46; --field: #27272a; --accent: #60a5fa; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; }
+    main { max-width: 36rem; margin: 0 auto; padding: 3rem 16px; }
+    h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+    p { margin: 0 0 1rem; color: var(--muted); }
+    textarea { width: 100%; min-height: 7rem; padding: 0.75rem; border: 1px solid var(--line); border-radius: 8px; background: var(--field); color: var(--fg); font: 13px/1.5 ui-monospace, Consolas, monospace; word-break: break-all; resize: vertical; }
+    button { margin-top: 0.75rem; padding: 0.5rem 1rem; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+    [hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <section id="going">
+      <h1 data-zh="正在回到 N.I.A…" data-en="Going back to N.I.A…"></h1>
+      <p id="where"></p>
+    </section>
+    <section id="paste" hidden>
+      <h1 data-zh="把这个网址粘贴回 N.I.A" data-en="Paste this address into N.I.A"></h1>
+      <p id="why"></p>
+      <p data-zh="在 N.I.A 里打开「设置 → 账户 → 已连接的账号」，点「连接 Google」→「没有自动跳回来？」，把下面的网址粘贴进去。1 小时内有效。" data-en="In N.I.A, open Settings → Account → Connected accounts, click Connect Google → “Not brought back automatically?”, and paste the address below. It works for an hour."></p>
+      <textarea id="address" readonly aria-label="Address"></textarea>
+      <button id="copy" type="button" data-zh="复制" data-en="Copy"></button>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var zh = /^zh/i.test(navigator.language || "");
+      function say(el) { el.textContent = el.getAttribute(zh ? "data-zh" : "data-en"); }
+      Array.prototype.forEach.call(document.querySelectorAll("[data-zh]"), say);
+      document.documentElement.lang = zh ? "zh-CN" : "en";
+
+      // Addresses on the home network only: N.I.A's own host check already tied the state to
+      // the address it was opened at, and this keeps the page from sending anyone elsewhere.
+      function homeNetwork(host) {
+        host = host.toLowerCase();
+        if (host === "localhost" || host === "[::1]" || /^\[f[cd][0-9a-f]{2}:/.test(host)) return true;
+        if (/\.(local|lan|home|home\.arpa|internal|localhost|ts\.net)$/.test(host)) return true;
+        var ip = host.match(/^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/);
+        if (ip) {
+          var a = Number(ip[1]), b = Number(ip[2]);
+          return a === 10 || a === 127 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127);
+        }
+        return host.indexOf(".") === -1 && host.indexOf(":") === -1; // a bare name such as "nia"
+      }
+
+      function origin() {
+        var state = new URLSearchParams(location.search).get("state") || "";
+        var dot = state.indexOf(".");
+        if (dot < 1) return null;
+        try {
+          var b64 = state.slice(dot + 1).replace(/-/g, "+").replace(/_/g, "/");
+          var text = atob(b64 + "===".slice((b64.length + 3) % 4));
+          var url = new URL(text);
+          if ((url.protocol === "http:" || url.protocol === "https:") && url.origin === text && homeNetwork(url.hostname)) return url.origin;
+        } catch (e) {}
+        return null;
+      }
+
+      function paste(reason) {
+        document.getElementById("going").hidden = true;
+        document.getElementById("paste").hidden = false;
+        document.getElementById("why").textContent = reason;
+        var box = document.getElementById("address");
+        box.value = location.href;
+        document.getElementById("copy").onclick = function () {
+          box.select();
+          if (navigator.clipboard) navigator.clipboard.writeText(box.value).catch(function () { document.execCommand("copy"); });
+          else document.execCommand("copy");
+        };
+      }
+
+      var to = location.search ? origin() : null;
+      if (!to) {
+        paste(zh ? "这个页面不知道 N.I.A 在哪里（没有带地址，或者不是家里网络里的地址），所以没法自动跳回去。" : "This page can't tell where N.I.A is (no address came with it, or it isn't on the home network), so it can't take you back.");
+        return;
+      }
+      document.getElementById("where").textContent = to;
+      location.replace(to + "/api/me/google/callback" + location.search);
+      // Still here after a while: the browser didn't go (it blocked the jump, or N.I.A didn't answer).
+      setTimeout(function () {
+        paste(zh ? "没能自动打开 " + to + "。" : "Couldn't open " + to + " by itself.");
+      }, 5000);
+    })();
+  </script>
+</body>
+</html>
